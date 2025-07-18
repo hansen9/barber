@@ -5,7 +5,6 @@ import com.movaintelligence.barber.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class OrderTreatmentTest {
+class OrderServiceTest {
     @MockBean
     private OrderRepository orderRepository;
     @MockBean
@@ -30,7 +29,7 @@ class OrderTreatmentTest {
     private TreatmentRepository treatmentRepository;
 
     @InjectMocks
-    private OrderTreatment orderTreatment;
+    private OrderService orderService;
 
     @BeforeEach
     void setUp() {
@@ -48,7 +47,7 @@ class OrderTreatmentTest {
         treatment.setPrice(BigDecimal.valueOf(100));
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(treatmentRepository.findById(1L)).thenReturn(Optional.of(treatment));
-        Order order = orderTreatment.createOrder(1L, 1L, false, LocalDateTime.now());
+        Order order = orderService.createOrder(1L, 1L, false, LocalDateTime.now());
         assertTrue(order.isBirthdayDiscount());
         assertFalse(order.isRedeemed());
         verify(orderRepository).save(any(Order.class));
@@ -67,7 +66,7 @@ class OrderTreatmentTest {
         treatment.setPrice(BigDecimal.valueOf(100));
         when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
         when(treatmentRepository.findById(2L)).thenReturn(Optional.of(treatment));
-        Order order = orderTreatment.createOrder(2L, 2L, true, LocalDateTime.now());
+        Order order = orderService.createOrder(2L, 2L, true, LocalDateTime.now());
         assertFalse(order.isBirthdayDiscount());
         assertTrue(order.isRedeemed());
         verify(orderRepository).save(any(Order.class));

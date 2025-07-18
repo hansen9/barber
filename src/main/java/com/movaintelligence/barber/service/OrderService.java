@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
-public class OrderTreatment {
+public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
