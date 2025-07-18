@@ -44,13 +44,13 @@ class OrderTest {
         Treatment treatment = new Treatment();
         order.setId(1L);
         order.setCustomer(customer);
-        order.setService(treatment);
+        order.setTreatment(treatment);
         order.setOrderDate(LocalDateTime.now());
-        order.setIsBirthdayDiscount(true);
-        order.setIsRedeemed(false);
+        order.setBirthdayDiscount(true);
+        order.setRedeemed(false);
         assertEquals(1L, order.getId());
         assertEquals(customer, order.getCustomer());
-        assertEquals(treatment, order.getService());
+        assertEquals(treatment, order.getTreatment());
         assertTrue(order.isBirthdayDiscount());
         assertFalse(order.isRedeemed());
     }
