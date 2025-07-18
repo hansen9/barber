@@ -1,0 +1,78 @@
+package com.movaintelligence.barber.service;
+
+import com.movaintelligence.barber.models.*;
+import com.movaintelligence.barber.repositories.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@SpringBootTest
+class OrderTreatmentTest {
+    @MockBean
+    private OrderRepository orderRepository;
+    @MockBean
+    private SaleRepository saleRepository;
+    @MockBean
+    private CustomerRepository customerRepository;
+    @MockBean
+    private TreatmentRepository treatmentRepository;
+
+    @InjectMocks
+    private OrderTreatment orderTreatment;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testCreateOrderWithBirthdayDiscount() {
+        Customer customer = new Customer();
+        customer.setId(1L);
+        customer.setBirthday(LocalDate.now());
+        customer.setPoint(5);
+        Treatment treatment = new Treatment();
+        treatment.setId(1L);
+        treatment.setPrice(BigDecimal.valueOf(100));
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(treatmentRepository.findById(1L)).thenReturn(Optional.of(treatment));
+        Order order = orderTreatment.createOrder(1L, 1L, false, LocalDateTime.now());
+        assertTrue(order.isBirthdayDiscount());
+        assertFalse(order.isRedeemed());
+        verify(orderRepository).save(any(Order.class));
+        verify(saleRepository).save(any(Sale.class));
+        verify(customerRepository).save(any(Customer.class));
+    }
+
+    @Test
+    void testCreateOrderWithRedemption() {
+        Customer customer = new Customer();
+        customer.setId(2L);
+        customer.setBirthday(LocalDate.now());
+        customer.setPoint(10);
+        Treatment treatment = new Treatment();
+        treatment.setId(2L);
+        treatment.setPrice(BigDecimal.valueOf(100));
+        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
+        when(treatmentRepository.findById(2L)).thenReturn(Optional.of(treatment));
+        Order order = orderTreatment.createOrder(2L, 2L, true, LocalDateTime.now());
+        assertFalse(order.isBirthdayDiscount());
+        assertTrue(order.isRedeemed());
+        verify(orderRepository).save(any(Order.class));
+        verify(saleRepository).save(any(Sale.class));
+        verify(customerRepository).save(any(Customer.class));
+    }
+}
+
