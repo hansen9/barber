@@ -1,5 +1,7 @@
 package com.movaintelligence.barber.service;
 
+import com.movaintelligence.barber.dto.OrderRequest;
+import com.movaintelligence.barber.dto.OrderResponse;
 import com.movaintelligence.barber.models.*;
 import com.movaintelligence.barber.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,14 @@ public class OrderService {
     private TreatmentRepository treatmentRepository;
 
     @Transactional
-    public Order createOrder(Long customerId, Long serviceId, boolean redeem, LocalDateTime orderDate) {
+    public OrderResponse createOrder(OrderRequest request) {
+        Long customerId = request.getCustomerId();
+        Long treatmentId = request.getTreatmentId();
+        boolean redeem = request.isRedeem();
+        LocalDateTime orderDate = request.getOrderDate() != null ? request.getOrderDate() : LocalDateTime.now();
+
         Customer customer = customerRepository.findById(customerId).orElseThrow();
-        Treatment treatment = treatmentRepository.findById(serviceId).orElseThrow();
+        Treatment treatment = treatmentRepository.findById(treatmentId).orElseThrow();
         boolean isBirthday = customer.getBirthday() != null && customer.getBirthday().equals(orderDate.toLocalDate());
         boolean isBirthdayDiscount = isBirthday && !redeem;
         boolean isRedeemed = redeem && customer.getPoint() >= 10;
@@ -55,8 +62,36 @@ public class OrderService {
         sale.setDate(orderDate);
         saleRepository.save(sale);
 
-        return order;
+        OrderResponse response = toOrderResponse(order);
+
+        return response;
+    }
+
+    public java.util.List<Order> listOrders() {
+        return orderRepository.findAll();
+    }
+
+    public java.util.List<Order> listOrdersByCustomer(Long customerId) {
+        return orderRepository.findByCustomerId(customerId);
+    }
+
+    public Order getOrder(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow();
+    }
+
+    public com.movaintelligence.barber.dto.OrderResponse toOrderResponse(Order order) {
+        com.movaintelligence.barber.dto.OrderResponse response = new com.movaintelligence.barber.dto.OrderResponse();
+        response.setOrderId(order.getId());
+        response.setCustomerId(order.getCustomer().getId());
+        response.setCustomerName(order.getCustomer().getName());
+        response.setTreatmentId(order.getTreatment().getId());
+        response.setTreatmentName(order.getTreatment().getName());
+        response.setOrderDate(order.getOrderDate());
+        response.setRedeemed(order.isRedeemed());
+        response.setBirthdayDiscount(order.isBirthdayDiscount());
+        // Find sale amount for this order
+        Sale sale = saleRepository.findByOrder(order);
+        response.setPrice(sale != null ? sale.getAmount() : order.getTreatment().getPrice());
+        return response;
     }
 }
-
-
