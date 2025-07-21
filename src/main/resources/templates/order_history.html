@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order History - Barber App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Order History</h2>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Treatment</th>
+                                <th>Price</th>
+                                <th>Birthday Discount</th>
+                                <th>Redeemed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="${#temporals.format(order.date, 'yyyy-MM-dd HH:mm')}"></td>
+                                <td th:text="${order.treatment.name}"></td>
+                                <td th:text="${order.price}"></td>
+                                <td>
+                                    <span th:if="${order.isBirthdayDiscount}" class="badge bg-info">Yes</span>
+                                    <span th:unless="${order.isBirthdayDiscount}">No</span>
+                                </td>
+                                <td>
+                                    <span th:if="${order.isRedeemed}" class="badge bg-warning">Yes</span>
+                                    <span th:unless="${order.isRedeemed}">No</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

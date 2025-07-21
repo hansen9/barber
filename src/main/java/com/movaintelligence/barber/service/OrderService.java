@@ -94,4 +94,13 @@ public class OrderService {
         response.setPrice(sale != null ? sale.getAmount() : order.getTreatment().getPrice());
         return response;
     }
+
+    public Order createOrder(long l, long l1, boolean b, LocalDateTime now) {
+        OrderRequest request = new OrderRequest();
+        request.setCustomerId(l);
+        request.setTreatmentId(l1);
+        request.setRedeem(b);
+        request.setOrderDate(now);
+        return createOrder(request).toOrder();
+    }
 }
