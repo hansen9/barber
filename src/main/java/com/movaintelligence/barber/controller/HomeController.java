@@ -1,7 +1,7 @@
 package com.movaintelligence.barber.controller;
 
-import com.movaintelligence.barber.models.Customer;
-import com.movaintelligence.barber.repositories.CustomerRepository;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.crm.domain.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

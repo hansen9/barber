@@ -1,19 +1,21 @@
-package com.movaintelligence.barber.models;
+package com.movaintelligence.barber.crm.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Getter @Setter
-public class Treatment {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    private String phoneNo;
+    private LocalDate birthday;
+    private Integer point;
 
     // Getters and setters
 }

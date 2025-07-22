@@ -1,7 +1,7 @@
-package com.movaintelligence.barber.repositories;
+package com.movaintelligence.barber.sales.domain.repository;
 
-import com.movaintelligence.barber.models.Order;
-import com.movaintelligence.barber.models.Sale;
+import com.movaintelligence.barber.sales.domain.entity.Order;
+import com.movaintelligence.barber.sales.domain.entity.Sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

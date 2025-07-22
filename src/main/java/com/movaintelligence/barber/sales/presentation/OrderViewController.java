@@ -1,7 +1,7 @@
-package com.movaintelligence.barber.controller;
+package com.movaintelligence.barber.sales.presentation;
 
-import com.movaintelligence.barber.models.Order;
-import com.movaintelligence.barber.service.OrderService;
+import com.movaintelligence.barber.sales.domain.entity.Order;
+import com.movaintelligence.barber.sales.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

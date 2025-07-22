@@ -1,4 +1,4 @@
-package com.movaintelligence.barber.dto;
+package com.movaintelligence.barber.sales.presentation.dto;
 
 import java.time.LocalDateTime;
 

@@ -1,10 +1,10 @@
 package com.movaintelligence.barber.controller;
-import com.movaintelligence.barber.models.Treatment;
-import com.movaintelligence.barber.repositories.TreatmentRepository;
-import com.movaintelligence.barber.models.Customer;
-import com.movaintelligence.barber.repositories.CustomerRepository;
-import com.movaintelligence.barber.models.Order;
-import com.movaintelligence.barber.repositories.OrderRepository;
+import com.movaintelligence.barber.catalog.domain.entity.Treatment;
+import com.movaintelligence.barber.catalog.domain.repository.TreatmentRepository;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.crm.domain.repository.CustomerRepository;
+import com.movaintelligence.barber.sales.domain.entity.Order;
+import com.movaintelligence.barber.sales.domain.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +25,20 @@ public class UiController {
         this.treatmentRepository = treatmentRepository;
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
+    }
+
+    // Index page mapping
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
+    // Home page mapping (handles form submission from index)
+    @GetMapping("/home")
+    public String home(@RequestParam("customerId") Long customerId, Model model) {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        model.addAttribute("customer", customer);
+        return "home";
     }
 
     // Book Order Page
@@ -68,5 +82,6 @@ public class UiController {
         model.addAttribute("redeemError", redeemError);
         return "redeem";
     }
-}
 
+
+}

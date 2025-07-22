@@ -14,9 +14,10 @@
                     <h2 class="card-title mb-4">Welcome, <span th:text="${customer.name}">Customer</span>!</h2>
                     <p class="mb-3">Your next birthday discount is on: <span th:text="${customer.birthday}">YYYY-MM-DD</span></p>
                     <div class="d-grid gap-2 col-6 mx-auto mb-3">
-                        <a th:href="@{/orders/new}" class="btn btn-primary">Book Order</a>
-                        <a th:href="@{/loyalty}" class="btn btn-success">View Loyalty Points</a>
+                        <a th:href="@{/orders/new/{customerId}(customerId=${customer.id})}" class="btn btn-primary">Book Order</a>
+                        <a th:href="@{/loyalty/{customerId}(customerId=${customer.id})}" class="btn btn-success">View Loyalty Points</a>
                         <a th:if="${customer.point} &gt;= 10" th:href="@{/redeem}" class="btn btn-warning">Redeem Free Haircut</a>
+                        <a th:href="@{/treatments}" class="btn btn-secondary">View Treatment List</a>
                     </div>
                 </div>
             </div>
@@ -25,4 +26,3 @@
 </div>
 </body>
 </html>
-
