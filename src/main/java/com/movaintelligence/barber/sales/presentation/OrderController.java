@@ -1,13 +1,11 @@
-package com.movaintelligence.barber.controller;
+package com.movaintelligence.barber.sales.presentation;
 
-import com.movaintelligence.barber.dto.OrderRequest;
-import com.movaintelligence.barber.dto.OrderResponse;
-import com.movaintelligence.barber.models.Order;
-import com.movaintelligence.barber.service.OrderService;
+import com.movaintelligence.barber.sales.presentation.dto.OrderRequest;
+import com.movaintelligence.barber.sales.presentation.dto.OrderResponse;
+import com.movaintelligence.barber.sales.domain.entity.Order;
+import com.movaintelligence.barber.sales.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

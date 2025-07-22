@@ -1,5 +1,7 @@
-package com.movaintelligence.barber.models;
+package com.movaintelligence.barber.sales.domain.entity;
 
+import com.movaintelligence.barber.catalog.domain.entity.Treatment;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

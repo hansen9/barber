@@ -1,4 +1,4 @@
-package com.movaintelligence.barber.models;
+package com.movaintelligence.barber.sales.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

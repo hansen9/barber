@@ -16,7 +16,7 @@
                         <div class="mb-3">
                             <label for="treatment" class="form-label">Select Treatment</label>
                             <select class="form-select" id="treatment" name="treatmentId" required>
-                                <option th:each="treatment : ${treatments}" th:value="${treatment.id}" th:text="${treatment.name} + ' - $' + treatment.price"></option>
+                                <option th:each="treatment : ${treatments}" th:value="${treatment.id}" th:text="${treatment.name} + ' - Rp.' + ${treatment.price}"></option>
                             </select>
                         </div>
                         <div class="mb-3">

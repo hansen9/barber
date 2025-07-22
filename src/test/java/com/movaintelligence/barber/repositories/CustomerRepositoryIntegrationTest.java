@@ -1,6 +1,7 @@
 package com.movaintelligence.barber.repositories;
 
-import com.movaintelligence.barber.models.Customer;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.crm.domain.repository.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

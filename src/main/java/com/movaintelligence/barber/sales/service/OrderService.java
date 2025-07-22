@@ -1,13 +1,17 @@
-package com.movaintelligence.barber.service;
+package com.movaintelligence.barber.sales.service;
 
-import com.movaintelligence.barber.dto.OrderRequest;
-import com.movaintelligence.barber.dto.OrderResponse;
-import com.movaintelligence.barber.models.*;
-import com.movaintelligence.barber.repositories.*;
+import com.movaintelligence.barber.catalog.domain.repository.TreatmentRepository;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.crm.domain.repository.CustomerRepository;
+import com.movaintelligence.barber.sales.presentation.dto.OrderRequest;
+import com.movaintelligence.barber.sales.presentation.dto.OrderResponse;
+import com.movaintelligence.barber.sales.domain.repository.OrderRepository;
+import com.movaintelligence.barber.sales.domain.entity.Sale;
+import com.movaintelligence.barber.sales.domain.repository.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.movaintelligence.barber.models.Order;
-import com.movaintelligence.barber.models.Treatment;
+import com.movaintelligence.barber.sales.domain.entity.Order;
+import com.movaintelligence.barber.catalog.domain.entity.Treatment;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -79,8 +83,8 @@ public class OrderService {
         return orderRepository.findById(orderId).orElseThrow();
     }
 
-    public com.movaintelligence.barber.dto.OrderResponse toOrderResponse(Order order) {
-        com.movaintelligence.barber.dto.OrderResponse response = new com.movaintelligence.barber.dto.OrderResponse();
+    public OrderResponse toOrderResponse(Order order) {
+        OrderResponse response = new OrderResponse();
         response.setOrderId(order.getId());
         response.setCustomerId(order.getCustomer().getId());
         response.setCustomerName(order.getCustomer().getName());

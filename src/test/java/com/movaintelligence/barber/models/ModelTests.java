@@ -1,5 +1,9 @@
 package com.movaintelligence.barber.models;
 
+import com.movaintelligence.barber.catalog.domain.entity.Treatment;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.sales.domain.entity.Order;
+import com.movaintelligence.barber.sales.domain.entity.Sale;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;

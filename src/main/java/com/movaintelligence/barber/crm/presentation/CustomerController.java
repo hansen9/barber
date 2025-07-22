@@ -1,4 +1,4 @@
-package com.movaintelligence.barber.controller;
+package com.movaintelligence.barber.crm.presentation;
 
 import org.springframework.web.bind.annotation.*;
 

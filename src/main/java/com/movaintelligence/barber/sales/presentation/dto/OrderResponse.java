@@ -1,8 +1,8 @@
-package com.movaintelligence.barber.dto;
+package com.movaintelligence.barber.sales.presentation.dto;
 
-import com.movaintelligence.barber.models.Customer;
-import com.movaintelligence.barber.models.Order;
-import com.movaintelligence.barber.models.Treatment;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.catalog.domain.entity.Treatment;
+import com.movaintelligence.barber.sales.domain.entity.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
