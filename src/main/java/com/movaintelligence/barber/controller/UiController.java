@@ -173,4 +173,34 @@ public class UiController {
     }
 
 
+    // New Order Flow: Step 1 - Customer Search and Select
+    @GetMapping("/order/select-customer")
+    public String selectCustomerPage(@RequestParam(value = "name", required = false) String name, Model model) {
+        List<Customer> customers = null;
+        if (name != null && !name.isEmpty()) {
+            customers = customerService.findByNameContainingIgnoreCase(name);
+        }
+        model.addAttribute("customers", customers);
+        return "order_customer_select";
+    }
+
+    // New Order Flow: Step 2 - Treatment Selection for Selected Customer
+    @GetMapping("/order/select-treatment/{customerId}")
+    public String selectTreatmentPage(@PathVariable Long customerId, Model model) {
+        Customer customer = customerService.findById(customerId).orElse(null);
+        List<Treatment> treatments = treatmentService.listTreatments();
+        model.addAttribute("customer", customer);
+        model.addAttribute("treatments", treatments);
+        return "order_treatment_select";
+    }
+
+    // New Order Flow: Step 3 - Create Order
+    @PostMapping("/order/create")
+    public String createOrderFromUi(@RequestParam Long customerId, @RequestParam Long treatmentId, Model model) {
+        // You may want to add more logic here (e.g., birthday/redeem handling)
+        // For now, just create a basic order
+        // ... call orderService.createOrder(customerId, treatmentId, ...)
+        // Redirect to order history or home
+        return "redirect:/order_history/" + customerId;
+    }
 }
