@@ -11,10 +11,10 @@ import com.movaintelligence.barber.sales.domain.repository.SaleRepository;
 import com.movaintelligence.barber.sales.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,63 +22,79 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@Transactional
+@Rollback(false)
 class OrderServiceTest {
-    @MockBean
+    @Autowired
     private OrderRepository orderRepository;
-    @MockBean
+    @Autowired
     private SaleRepository saleRepository;
-    @MockBean
+    @Autowired
     private CustomerRepository customerRepository;
-    @MockBean
+    @Autowired
     private TreatmentRepository treatmentRepository;
-
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
+
+    private Treatment defaultTreatment;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        // Clean up test data before each test
+        saleRepository.deleteAll();
+        orderRepository.deleteAll();
+        customerRepository.deleteAll();
+        treatmentRepository.deleteAll();
+        // Insert a default treatment for use in tests
+        Treatment treatment = new Treatment();
+        treatment.setName("Default Treatment");
+        treatment.setPrice(BigDecimal.valueOf(100));
+        defaultTreatment = treatmentRepository.save(treatment);
     }
 
     @Test
     void testCreateOrderWithBirthdayDiscount() {
         Customer customer = new Customer();
-        customer.setId(1L);
+        customer.setName("Test User");
         customer.setBirthday(LocalDate.now());
         customer.setPoint(5);
-        Treatment treatment = new Treatment();
-        treatment.setId(1L);
-        treatment.setPrice(BigDecimal.valueOf(100));
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
-        when(treatmentRepository.findById(1L)).thenReturn(Optional.of(treatment));
-        Order order = orderService.createOrder(1L, 1L, false, LocalDateTime.now());
+        customer = customerRepository.save(customer);
+        // Use default treatment from setUp
+        Treatment treatment = defaultTreatment;
+        Order order = orderService.createOrder(customer.getId(), treatment.getId(), false, LocalDateTime.now());
         assertTrue(order.isBirthdayDiscount());
         assertFalse(order.isRedeemed());
-        verify(orderRepository).save(any(Order.class));
-        verify(saleRepository).save(any(Sale.class));
-        verify(customerRepository).save(any(Customer.class));
+        assertEquals(customer.getId(), order.getCustomer().getId());
+        assertEquals(treatment.getId(), order.getTreatment().getId());
+        // Check that order and sale are persisted
+        assertTrue(orderRepository.findById(order.getId()).isPresent());
+        assertFalse(saleRepository.findAll().isEmpty());
+        // Check customer points updated
+        Customer updatedCustomer = customerRepository.findById(customer.getId()).orElseThrow();
+        assertEquals(5, updatedCustomer.getPoint());
     }
 
     @Test
     void testCreateOrderWithRedemption() {
         Customer customer = new Customer();
-        customer.setId(2L);
+        customer.setName("Redeem User");
         customer.setBirthday(LocalDate.now());
         customer.setPoint(10);
-        Treatment treatment = new Treatment();
-        treatment.setId(2L);
-        treatment.setPrice(BigDecimal.valueOf(100));
-        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
-        when(treatmentRepository.findById(2L)).thenReturn(Optional.of(treatment));
-        Order order = orderService.createOrder(2L, 2L, true, LocalDateTime.now());
+        customer = customerRepository.save(customer);
+        // Use default treatment from setUp
+        Treatment treatment = defaultTreatment;
+        Order order = orderService.createOrder(customer.getId(), treatment.getId(), true, LocalDateTime.now());
         assertFalse(order.isBirthdayDiscount());
         assertTrue(order.isRedeemed());
-        verify(orderRepository).save(any(Order.class));
-        verify(saleRepository).save(any(Sale.class));
-        verify(customerRepository).save(any(Customer.class));
+        assertEquals(customer.getId(), order.getCustomer().getId());
+        assertEquals(treatment.getId(), order.getTreatment().getId());
+        // Check that order and sale are persisted
+        assertTrue(orderRepository.findById(order.getId()).isPresent());
+        assertFalse(saleRepository.findAll().isEmpty());
+        // Check customer points updated
+        Customer updatedCustomer = customerRepository.findById(customer.getId()).orElseThrow();
+        assertEquals(0, updatedCustomer.getPoint());
     }
 }
-

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -99,12 +100,38 @@ public class OrderService {
         return response;
     }
 
-    public Order createOrder(long l, long l1, boolean b, LocalDateTime now) {
+    public Order createOrder(long custId, long trtmId, boolean isRedeem, LocalDateTime now) {
         OrderRequest request = new OrderRequest();
-        request.setCustomerId(l);
-        request.setTreatmentId(l1);
-        request.setRedeem(b);
+        request.setCustomerId(custId);
+        request.setTreatmentId(trtmId);
+        request.setRedeem(isRedeem);
         request.setOrderDate(now);
         return createOrder(request).toOrder();
+    }
+
+    public Order save(Order order) {
+        return orderRepository.save(order);
+    }
+
+    public Order update(Long id, Order updated) {
+        Order order = orderRepository.findById(id).orElseThrow();
+        order.setCustomer(updated.getCustomer());
+        order.setTreatment(updated.getTreatment());
+        order.setOrderDate(updated.getOrderDate());
+        order.setBirthdayDiscount(updated.isBirthdayDiscount());
+        order.setRedeemed(updated.isRedeemed());
+        return orderRepository.save(order);
+    }
+
+    public void delete(Long id) {
+        orderRepository.deleteById(id);
+    }
+
+    public Order findById(Long id) {
+        return orderRepository.findById(id).orElse(null);
+    }
+
+    public List<Order> findAll() {
+        return orderRepository.findAll();
     }
 }

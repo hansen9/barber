@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
 import java.time.LocalDate;
 import java.util.List;
@@ -81,6 +82,94 @@ public class UiController {
         model.addAttribute("redeemSuccess", redeemSuccess);
         model.addAttribute("redeemError", redeemError);
         return "redeem";
+    }
+
+    // Customer/Member List Page
+    @GetMapping("/customers")
+    public String customerList(Model model) {
+        List<Customer> customers = customerService.findAll();
+        model.addAttribute("customers", customers);
+        return "customer_list";
+    }
+
+    // Treatment List Page
+    @GetMapping("/treatment_list")
+    public String treatmentList(Model model) {
+        List<Treatment> treatments = treatmentService.listTreatments();
+        model.addAttribute("treatments", treatments);
+        return "treatment_list";
+    }
+
+    // Show update form for a treatment
+    @GetMapping("/treatment/update/{id}")
+    public String showUpdateTreatmentForm(@PathVariable Long id, Model model) {
+        Treatment treatment = treatmentService.findById(id);
+        model.addAttribute("treatment", treatment);
+        return "treatment_update";
+    }
+
+    // Handle update form submission
+    @PostMapping("/treatment/update/{id}")
+    public String updateTreatment(@PathVariable Long id, Treatment treatment) {
+        treatmentService.update(id, treatment);
+        return "redirect:/treatment_list";
+    }
+
+    // Handle delete treatment
+    @PostMapping("/treatment/delete/{id}")
+    public String deleteTreatment(@PathVariable Long id) {
+        treatmentService.delete(id);
+        return "redirect:/treatment_list";
+    }
+
+    // Show add treatment form
+    @GetMapping("/treatment/add")
+    public String showAddTreatmentForm(Model model) {
+        model.addAttribute("treatment", new com.movaintelligence.barber.catalog.domain.entity.Treatment());
+        return "treatment_add";
+    }
+
+    // Handle add treatment form submission
+    @PostMapping("/treatment/add")
+    public String addTreatment(com.movaintelligence.barber.catalog.domain.entity.Treatment treatment) {
+        treatmentService.save(treatment);
+        return "redirect:/treatment_list";
+    }
+
+    // Show add customer form
+    @GetMapping("/customer/add")
+    public String showAddCustomerForm(Model model) {
+        model.addAttribute("customer", new com.movaintelligence.barber.crm.domain.entity.Customer());
+        return "customer_add";
+    }
+
+    // Handle add customer form submission
+    @PostMapping("/customer/add")
+    public String addCustomer(com.movaintelligence.barber.crm.domain.entity.Customer customer) {
+        customerService.save(customer);
+        return "redirect:/customers";
+    }
+
+    // Show update form for a customer
+    @GetMapping("/customer/update/{id}")
+    public String showUpdateCustomerForm(@PathVariable Long id, Model model) {
+        com.movaintelligence.barber.crm.domain.entity.Customer customer = customerService.findByIdOrNull(id);
+        model.addAttribute("customer", customer);
+        return "customer_update";
+    }
+
+    // Handle update form submission
+    @PostMapping("/customer/update/{id}")
+    public String updateCustomer(@PathVariable Long id, com.movaintelligence.barber.crm.domain.entity.Customer customer) {
+        customerService.update(id, customer);
+        return "redirect:/customers";
+    }
+
+    // Handle delete customer
+    @PostMapping("/customer/delete/{id}")
+    public String deleteCustomer(@PathVariable Long id) {
+        customerService.delete(id);
+        return "redirect:/customers";
     }
 
 
