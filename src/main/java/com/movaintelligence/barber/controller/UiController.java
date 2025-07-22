@@ -83,5 +83,13 @@ public class UiController {
         return "redeem";
     }
 
+    // Customer/Member List Page
+    @GetMapping("/customers")
+    public String customerList(Model model) {
+        List<Customer> customers = customerService.findAll();
+        model.addAttribute("customers", customers);
+        return "customer_list";
+    }
+
 
 }

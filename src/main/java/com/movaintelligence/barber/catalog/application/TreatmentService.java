@@ -21,4 +21,23 @@ public class TreatmentService {
     public List<Treatment> listTreatments() {
         return repository.findAll();
     }
+
+    public Treatment save(Treatment treatment) {
+        return repository.save(treatment);
+    }
+
+    public Treatment update(Long id, Treatment updated) {
+        Treatment treatment = repository.findById(id).orElseThrow();
+        treatment.setName(updated.getName());
+        treatment.setPrice(updated.getPrice());
+        return repository.save(treatment);
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+
+    public Treatment findById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
 }
