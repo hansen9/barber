@@ -1,8 +1,8 @@
 package com.movaintelligence.barber.controller;
 import com.movaintelligence.barber.catalog.domain.entity.Treatment;
-import com.movaintelligence.barber.catalog.domain.repository.TreatmentRepository;
+import com.movaintelligence.barber.catalog.application.TreatmentService;
 import com.movaintelligence.barber.crm.domain.entity.Customer;
-import com.movaintelligence.barber.crm.domain.repository.CustomerRepository;
+import com.movaintelligence.barber.crm.application.CustomerService;
 import com.movaintelligence.barber.sales.domain.entity.Order;
 import com.movaintelligence.barber.sales.domain.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ import java.util.List;
 
 @Controller
 public class UiController {
-    private final TreatmentRepository treatmentRepository;
-    private final CustomerRepository customerRepository;
+    private final TreatmentService treatmentService;
+    private final CustomerService customerService;
     private final OrderRepository orderRepository;
 
     @Autowired
-    public UiController(TreatmentRepository treatmentRepository, CustomerRepository customerRepository, OrderRepository orderRepository) {
-        this.treatmentRepository = treatmentRepository;
-        this.customerRepository = customerRepository;
+    public UiController(TreatmentService treatmentService, CustomerService customerService, OrderRepository orderRepository) {
+        this.treatmentService = treatmentService;
+        this.customerService = customerService;
         this.orderRepository = orderRepository;
     }
 
@@ -36,7 +36,7 @@ public class UiController {
     // Home page mapping (handles form submission from index)
     @GetMapping("/home")
     public String home(@RequestParam("customerId") Long customerId, Model model) {
-        Customer customer = customerRepository.findById(customerId).orElse(null);
+        Customer customer = customerService.findById(customerId).orElse(null);
         model.addAttribute("customer", customer);
         return "home";
     }
@@ -44,8 +44,8 @@ public class UiController {
     // Book Order Page
     @GetMapping("/orders/new/{customerId}")
     public String bookOrder(@PathVariable Long customerId, Model model) {
-        Customer customer = customerRepository.findById(customerId).orElse(null);
-        List<Treatment> treatments = treatmentRepository.findAll();
+        Customer customer = customerService.findById(customerId).orElse(null);
+        List<Treatment> treatments = treatmentService.listTreatments();
         boolean isBirthday = false;
         boolean canRedeem = false;
         if (customer != null) {
@@ -64,7 +64,7 @@ public class UiController {
     // Loyalty Points Page
     @GetMapping("/loyalty/{customerId}")
     public String loyalty(@PathVariable Long customerId, Model model) {
-        Customer customer = customerRepository.findById(customerId).orElse(null);
+        Customer customer = customerService.findById(customerId).orElse(null);
         List<Order> orders = orderRepository.findByCustomerId(customerId);
         model.addAttribute("customer", customer);
         model.addAttribute("orders", orders);
@@ -74,7 +74,7 @@ public class UiController {
     // Redeem Free Haircut Page
     @GetMapping("/redeem/{customerId}")
     public String redeem(@PathVariable Long customerId, Model model, @RequestParam(value = "redeemSuccess", required = false) Boolean redeemSuccess, @RequestParam(value = "redeemError", required = false) Boolean redeemError) {
-        Customer customer = customerRepository.findById(customerId).orElse(null);
+        Customer customer = customerService.findById(customerId).orElse(null);
         boolean canRedeem = customer != null && customer.getPoint() != null && customer.getPoint() >= 10;
         model.addAttribute("customer", customer);
         model.addAttribute("canRedeem", canRedeem);
