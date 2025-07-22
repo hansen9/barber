@@ -2,26 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Treatment List</title>
+    <title>Treatment Management</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container mt-4">
-    <h2>Available Treatments</h2>
-    <table class="table table-striped mt-3">
+<div class="container mt-5">
+    <h2>Treatment Management</h2>
+    <a class="btn btn-success mb-3" th:href="@{/treatment/add}">Add Treatment</a>
+    <table class="table table-bordered mt-3">
         <thead>
         <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Price</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="treatment : ${treatments}">
+            <td th:text="${treatment.id}"></td>
             <td th:text="${treatment.name}"></td>
-            <td th:text="${#numbers.formatDecimal(treatment.price, 1, 'COMMA', 2, 'POINT')}"></td>
+            <td th:text="${treatment.price}"></td>
+            <td>
+                <a th:href="@{'/treatment/update/' + ${treatment.id}}" class="btn btn-warning btn-sm">Update</a>
+                <form th:action="@{'/treatment/delete/' + ${treatment.id}}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
+    <a class="btn btn-outline-primary w-100" th:href="@{/}">back</a>
 </div>
 </body>
 </html>
