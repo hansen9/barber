@@ -136,5 +136,41 @@ public class UiController {
         return "redirect:/treatment_list";
     }
 
+    // Show add customer form
+    @GetMapping("/customer/add")
+    public String showAddCustomerForm(Model model) {
+        model.addAttribute("customer", new com.movaintelligence.barber.crm.domain.entity.Customer());
+        return "customer_add";
+    }
+
+    // Handle add customer form submission
+    @PostMapping("/customer/add")
+    public String addCustomer(com.movaintelligence.barber.crm.domain.entity.Customer customer) {
+        customerService.save(customer);
+        return "redirect:/customers";
+    }
+
+    // Show update form for a customer
+    @GetMapping("/customer/update/{id}")
+    public String showUpdateCustomerForm(@PathVariable Long id, Model model) {
+        com.movaintelligence.barber.crm.domain.entity.Customer customer = customerService.findByIdOrNull(id);
+        model.addAttribute("customer", customer);
+        return "customer_update";
+    }
+
+    // Handle update form submission
+    @PostMapping("/customer/update/{id}")
+    public String updateCustomer(@PathVariable Long id, com.movaintelligence.barber.crm.domain.entity.Customer customer) {
+        customerService.update(id, customer);
+        return "redirect:/customers";
+    }
+
+    // Handle delete customer
+    @PostMapping("/customer/delete/{id}")
+    public String deleteCustomer(@PathVariable Long id) {
+        customerService.delete(id);
+        return "redirect:/customers";
+    }
+
 
 }

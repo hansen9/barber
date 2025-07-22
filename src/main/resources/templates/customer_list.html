@@ -8,6 +8,7 @@
 <body>
 <div class="container mt-5">
     <h2>Customer Management</h2>
+    <a class="btn btn-success mb-3" th:href="@{/customer/add}">Add Customer</a>
     <table class="table table-bordered mt-3">
         <thead>
         <tr>
@@ -16,6 +17,7 @@
             <th>Phone No</th>
             <th>Birthday</th>
             <th>Points</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -25,6 +27,12 @@
             <td th:text="${customer.phoneNo}"></td>
             <td th:text="${customer.birthday}"></td>
             <td th:text="${customer.point}"></td>
+            <td>
+                <a th:href="@{'/customer/update/' + ${customer.id}}" class="btn btn-warning btn-sm">Update</a>
+                <form th:action="@{'/customer/delete/' + ${customer.id}}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -32,4 +40,3 @@
 </div>
 </body>
 </html>
-
