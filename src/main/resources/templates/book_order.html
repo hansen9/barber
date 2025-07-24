@@ -26,25 +26,29 @@
                             </select>
                         </div>
                     </form>
-                    <form th:action="@{/orders}" th:object="${orderRequest}" method="post">
+                    <form th:action="@{/orders/create}" th:object="${orderRequest}" method="post">
+                        <!-- Hidden field to carry customerId -->
+                        <input type="hidden" th:field="*{customerId}" />
+
+                        <!-- Hidden field to carry orderDate -->
+                        <input type="hidden" th:field="*{orderDate}" />
                         <div>
                             <label>Treatment:</label>
                             <select class="form-select" id="treatmentId" name="treatmentId" required>
                                 <option th:each="t : ${treatments}" th:value="${t.id}" th:text="${t.name}"></option>
                             </select>
                         </div>
-
                         <div th:if="${isBirthday}">
                             🎉 <strong>It's the customer's birthday!</strong>
                         </div>
-
                         <div th:if="${canRedeem}">
                             <input type="checkbox" id="redeem" name="redeem">
                             <label for="redeem">Redeem 10 points for a free haircut</label>
                         </div>
-
                         <button type="submit">Submit Order</button>
                     </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

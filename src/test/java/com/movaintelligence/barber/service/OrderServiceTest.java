@@ -63,7 +63,7 @@ class OrderServiceTest {
         customer = customerRepository.save(customer);
         // Use default treatment from setUp
         Treatment treatment = defaultTreatment;
-        Order order = orderService.createOrder(customer.getId(), treatment.getId(), false, LocalDateTime.now());
+        Order order = orderService.createOrder(customer.getId(), treatment.getId(), false, true, LocalDateTime.now());
         assertTrue(order.isBirthdayDiscount());
         assertFalse(order.isRedeemed());
         assertEquals(customer.getId(), order.getCustomer().getId());
@@ -85,7 +85,7 @@ class OrderServiceTest {
         customer = customerRepository.save(customer);
         // Use default treatment from setUp
         Treatment treatment = defaultTreatment;
-        Order order = orderService.createOrder(customer.getId(), treatment.getId(), true, LocalDateTime.now());
+        Order order = orderService.createOrder(customer.getId(), treatment.getId(), true, false, LocalDateTime.now());
         assertFalse(order.isBirthdayDiscount());
         assertTrue(order.isRedeemed());
         assertEquals(customer.getId(), order.getCustomer().getId());

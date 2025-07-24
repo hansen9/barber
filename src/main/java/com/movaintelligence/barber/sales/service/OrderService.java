@@ -100,12 +100,13 @@ public class OrderService {
         return response;
     }
 
-    public Order createOrder(long custId, long trtmId, boolean isRedeem, LocalDateTime now) {
+    public Order createOrder(long custId, long trtmId, boolean isRedeem, boolean isBirthdayDiscount, LocalDateTime now) {
         OrderRequest request = new OrderRequest();
         request.setCustomerId(custId);
         request.setTreatmentId(trtmId);
         request.setRedeem(isRedeem);
         request.setOrderDate(now);
+        request.setBirthdayDiscount(isBirthdayDiscount);
         return createOrder(request).toOrder();
     }
 
