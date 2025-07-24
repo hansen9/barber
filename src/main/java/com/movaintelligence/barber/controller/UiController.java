@@ -5,6 +5,8 @@ import com.movaintelligence.barber.crm.domain.entity.Customer;
 import com.movaintelligence.barber.crm.application.CustomerService;
 import com.movaintelligence.barber.sales.domain.entity.Order;
 import com.movaintelligence.barber.sales.domain.repository.OrderRepository;
+import com.movaintelligence.barber.sales.presentation.dto.OrderResponse;
+import com.movaintelligence.barber.sales.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,13 +23,13 @@ import java.util.List;
 public class UiController {
     private final TreatmentService treatmentService;
     private final CustomerService customerService;
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     @Autowired
-    public UiController(TreatmentService treatmentService, CustomerService customerService, OrderRepository orderRepository) {
+    public UiController(TreatmentService treatmentService, CustomerService customerService, OrderService orderService) {
         this.treatmentService = treatmentService;
         this.customerService = customerService;
-        this.orderRepository = orderRepository;
+        this.orderService = orderService;
     }
 
     // Index page mapping
@@ -66,7 +70,7 @@ public class UiController {
     @GetMapping("/loyalty/{customerId}")
     public String loyalty(@PathVariable Long customerId, Model model) {
         Customer customer = customerService.findById(customerId).orElse(null);
-        List<Order> orders = orderRepository.findByCustomerId(customerId);
+        List<Order> orders = orderService.findByCustomerId(customerId);
         model.addAttribute("customer", customer);
         model.addAttribute("orders", orders);
         return "loyalty";
@@ -194,13 +198,51 @@ public class UiController {
         return "order_treatment_select";
     }
 
-    // New Order Flow: Step 3 - Create Order
-    @PostMapping("/order/create")
-    public String createOrderFromUi(@RequestParam Long customerId, @RequestParam Long treatmentId, Model model) {
-        // You may want to add more logic here (e.g., birthday/redeem handling)
-        // For now, just create a basic order
-        // ... call orderService.createOrder(customerId, treatmentId, ...)
-        // Redirect to order history or home
+    // New Order Flow: Step 3 - Confirm Order
+    @PostMapping("/orders/confirm/{customerId}")
+    public String confirmOrder(@PathVariable Long customerId, 
+                              @RequestParam Long treatmentId,
+                              Model model) {
+        Customer customer = customerService.findById(customerId).orElse(null);
+        Treatment treatment = treatmentService.findById(treatmentId);
+        
+        BigDecimal discountedPrice = null;
+        BigDecimal finalPrice = treatment.getPrice();
+        
+        if (customer != null) {
+            LocalDate today = LocalDate.now();
+            boolean isBirthday = today.getMonth() == customer.getBirthday().getMonth() 
+                              && today.getDayOfMonth() == customer.getBirthday().getDayOfMonth();
+            
+            if (isBirthday) {
+                discountedPrice = treatment.getPrice().multiply(new BigDecimal("0.8"));
+                finalPrice = discountedPrice;
+            } else if (customer.getPoint() != null && customer.getPoint() >= 10) {
+                finalPrice = BigDecimal.ZERO;
+            }
+        }
+        
+        model.addAttribute("customer", customer);
+        model.addAttribute("treatment", treatment);
+        model.addAttribute("discountedPrice", discountedPrice);
+        model.addAttribute("finalPrice", finalPrice);
+        return "order_confirmation";
+    }
+
+    // New Order Flow: Step 4 - Create Order
+    @PostMapping("/orders/create")
+    public String createOrder(@RequestParam Long customerId, @RequestParam Long treatmentId) {
+        // Implementation to actually create the order would go here
         return "redirect:/order_history/" + customerId;
+    }
+
+    @GetMapping("/sales_list")
+    public String salesList(Model model) {
+        List<Order> orders = orderService.listOrders();
+        List<OrderResponse> responses = orders.stream()
+                .map(orderService::toOrderResponse)
+                .toList();
+        model.addAttribute("sales", responses);
+        return "sales_list";
     }
 }

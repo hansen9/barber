@@ -1,5 +1,8 @@
 package com.movaintelligence.barber.sales.presentation;
 
+import com.movaintelligence.barber.catalog.domain.entity.Treatment;
+import com.movaintelligence.barber.crm.domain.entity.Customer;
+import com.movaintelligence.barber.sales.domain.entity.Sale;
 import com.movaintelligence.barber.sales.presentation.dto.OrderRequest;
 import com.movaintelligence.barber.sales.presentation.dto.OrderResponse;
 import com.movaintelligence.barber.sales.domain.entity.Order;
