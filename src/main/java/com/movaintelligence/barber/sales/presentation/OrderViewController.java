@@ -21,10 +21,4 @@ public class OrderViewController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/history/{customerId}")
-    public String orderHistory(@PathVariable Long customerId, Model model) {
-        List<Order> orders = orderService.listOrdersByCustomer(customerId);
-        model.addAttribute("orders", orders.stream().map(orderService::toOrderResponse).toList());
-        return "order_history";
-    }
 }

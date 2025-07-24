@@ -72,11 +72,11 @@ public class OrderService {
         return response;
     }
 
-    public java.util.List<Order> listOrders() {
+    public List<Order> listOrders() {
         return orderRepository.findAll();
     }
 
-    public java.util.List<Order> listOrdersByCustomer(Long customerId) {
+    public List<Order> listOrdersByCustomer(Long customerId) {
         return orderRepository.findByCustomerId(customerId);
     }
 
@@ -134,4 +134,8 @@ public class OrderService {
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
+
+    public Sale getSale(Order order) { return saleRepository.findByOrder(order); }
+
+    public List<Order> findByCustomerId(Long customerId) { return orderRepository.findByCustomerId(customerId);}
 }

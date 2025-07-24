@@ -11,8 +11,39 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="card-title mb-4">Book a Treatment</h2>
-                    <form th:action="@{/orders}" th:object="${orderRequest}" method="post">
+                    <h2 class="card-title mb-4">Select Customer & Treatment</h2>
+                    <form th:action="@{/order/select-customer}" method="get" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="name" placeholder="Search by name" th:value="${param.name}">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </form>
+
+                    <div th:if="${customers != null}" class="mb-4">
+                        <h3>Select Customer</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Birthday</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="customer : ${customers}">
+                                    <td th:text="${customer.name}"></td>
+                                    <td th:text="${customer.phoneNo}"></td>
+                                    <td th:text="${#dates.format(customer.birthday, 'dd MMMM yyyy')}"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm" @click="selectCustomer(${customer.id})">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <form th:action="@{/orders}" th:object="${orderRequest}" method="post" th:if="${selectedCustomer != null}">
                         <div class="mb-3">
                             <label for="treatment" class="form-label">Select Treatment</label>
                             <select class="form-select" id="treatment" name="treatmentId" required>
@@ -42,4 +73,3 @@
 </div>
 </body>
 </html>
-
