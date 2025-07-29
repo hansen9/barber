@@ -5,6 +5,7 @@ import com.movaintelligence.barber.catalog.domain.repository.TreatmentRepository
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Alexander Hansen, Irfin Afifudin
@@ -39,5 +40,8 @@ public class TreatmentService {
 
     public Treatment findById(Long id) {
         return repository.findById(id).orElse(null);
+    }
+    public Optional<Treatment> findByName(String name) {
+        return repository.findByName(name);
     }
 }

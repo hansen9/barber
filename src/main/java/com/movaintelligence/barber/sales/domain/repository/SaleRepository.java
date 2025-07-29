@@ -10,4 +10,3 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     Sale findByOrder(Order order);
     // Custom query methods if needed
 }
-

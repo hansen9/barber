@@ -15,11 +15,13 @@ import com.movaintelligence.barber.catalog.domain.entity.Treatment;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class OrderService {
+
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -139,4 +141,95 @@ public class OrderService {
     public Sale getSale(Order order) { return saleRepository.findByOrder(order); }
 
     public List<Order> findByCustomerId(Long customerId) { return orderRepository.findByCustomerId(customerId);}
+
+    @Transactional
+    public Order createAsExistingMember(Long memberNo, Long treatmentId) {
+
+        /** Algoritma:
+         * 1. Cari customer by memberNo
+         * 2. Cari treatment by treatmentId
+         * 3. Buat order baru
+         * 4. Jika hari ini adl birthday customer, maka berikan diskon 15% pada object Order.
+         * 5. Save order ke database
+         * 6. Tambahkan point reward utk customer
+         * 7. Return order
+         */
+
+        // #1 & #2
+        var customer = customerRepository.findById(memberNo);
+        var treatment = treatmentRepository.findById(treatmentId);
+        if (customer.isEmpty()) {
+            System.out.println("###### Masuk customer.isEmpty(), tapi kagak error saat runtime");
+            throw new RuntimeException("Customer with member no " + memberNo + " not found");
+        }
+        if (treatment.isEmpty()) {
+            System.out.println("###### Masuk treatment.isEmpty()");
+            throw new RuntimeException("Treatment not found");
+        }
+
+        // #3
+        Order order = new Order();
+        order.setCustomer(customer);
+        order.setTreatment(treatment);
+        order.setOrderDate(LocalDateTime.now());
+
+        // #4
+        if (customer.get().getBirthday() != null && customer.get().getBirthday().equals(LocalDate.now())) {
+            order.setBirthdayDiscount(true);
+        }
+        orderRepository.save(order);
+
+        // #5
+        customer.get().setPoint(customer.get().getPoint() + 1);
+        customerRepository.save(customer.get());
+
+        return order;
+    }
+
+    /**
+     * Method ini hanya utk keperluan mendemokan gagal db-transaction.
+     *
+     * @param memberNo
+     * @param treatmentId
+     * @return
+     */
+    @Transactional
+    public Order createAsExistingMember_willFail(Long memberNo, Long treatmentId) {
+
+        /** Algoritma:
+         * 1. Cari customer by memberNo
+         * 2. Cari treatment by treatmentId
+         * 3. Buat order baru
+         * 4. Jika hari ini adl birthday customer, maka berikan diskon 15% pada object Order.
+         * 5. Save order ke database
+         * 6. Tambahkan point reward utk customer
+         * 7. Return order
+         */
+
+        // #1 & #2
+        var customer = customerRepository.findById(memberNo);
+        var treatment = treatmentRepository.findById(treatmentId);
+        if (customer.isEmpty())
+            throw new RuntimeException("Customer with member no " + memberNo + " not found");
+        if (treatment.isEmpty())
+            throw new RuntimeException("Treatment not found");
+
+        // #3
+        Order order = new Order();
+        order.setCustomer(customer);
+        order.setTreatment(treatment);
+        order.setOrderDate(LocalDateTime.now());
+
+        // #4
+        if (customer.get().getBirthday() != null && customer.get().getBirthday().equals(LocalDate.now())) {
+            order.setBirthdayDiscount(true);
+        }
+        orderRepository.save(order);
+
+        // #5
+        customer.get().setPoint(null);
+        customerRepository.save(customer.get());
+
+        return order;
+    }
 }
